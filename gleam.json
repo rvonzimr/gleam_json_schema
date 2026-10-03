@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/rvonzimr/gleam_schema",
+    "$id": "https://raw.githubusercontent.com/rvonzimr/gleam_json_schema/v1.18.0/gleam.json",
     "title": "Unofficial gleam.toml schema (Gleam 1.18.0)",
     "description": "Unofficial, community-written schema for a Gleam package configuration file. Not affiliated with, endorsed by, or published by the Gleam project. Key descriptions are adapted from the official reference at https://gleam.run/documentation/gleam-toml-reference/, which is the authority if the two disagree",
     "examples": [

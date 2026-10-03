@@ -1,5 +1,5 @@
 {
-    "target": "https://github.com/rvonzimr/gleam_schema",
+    "target": "https://raw.githubusercontent.com/rvonzimr/gleam_json_schema/v1.18.0/gleam.json",
     "$comment": "Every repository type and its required field set",
     "tests": [
         {
