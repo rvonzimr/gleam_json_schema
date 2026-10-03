@@ -1,0 +1,40 @@
+# A library published to Hex, using every documented key.
+name = "my_library"
+version = "2.3.1"
+licences = ["Apache-2.0"]
+description = "A parser for the PureData file format"
+gleam = ">= 1.15.0"
+target = "erlang"
+internal_modules = ["my_library/internal", "my_library/internal/*"]
+links = [
+  { title = "Home page", href = "https://example.com" },
+  { title = "Sponsor", href = "https://example.com/sponsor" },
+]
+
+[repository]
+type = "github"
+user = "my-user"
+repo = "monorepo"
+path = "packages/my_library"
+tag_prefix = "my_library-"
+
+[[documentation.pages]]
+title = "Cookbook"
+path = "cookbook.html"
+source = "./docs/cookbook.md"
+
+[dependencies]
+gleam_stdlib = ">= 1.0.0 and < 2.0.0"
+sibling = { path = "../sibling" }
+pinned = { git = "https://example.com/repo", ref = "a8b3c5d82", path = "packages/pinned" }
+
+[dev_dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"
+
+[erlang]
+application_start_module = "my_library@application"
+extra_applications = ["inets", "ssl"]
+
+[tools.my_tool]
+enable = true
+threads = 8

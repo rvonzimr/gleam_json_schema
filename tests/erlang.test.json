@@ -1,0 +1,46 @@
+{
+    "target": "https://github.com/rvonzimr/gleam_schema",
+    "$comment": "The erlang table",
+    "tests": [
+        {
+            "description": "an OTP application start module and extra applications",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "erlang": {
+                    "application_start_module": "my_application",
+                    "extra_applications": ["inets", "ssl"]
+                }
+            }
+        },
+        {
+            "description": "a start module in Erlang atom format",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "erlang": { "application_start_module": "my_project@application" }
+            }
+        },
+        {
+            "description": "an empty erlang table",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "erlang": {} }
+        },
+        {
+            "description": "extra_applications must be an array of strings",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "erlang": { "extra_applications": "ssl" }
+            }
+        },
+        {
+            "description": "an unknown key in the erlang table is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "erlang": { "application_start_modules": "my_application" }
+            }
+        }
+    ]
+}

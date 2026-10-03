@@ -1,0 +1,9 @@
+{
+    "title": "Unofficial gleam.toml schema",
+    "description": "Unofficial, community-written JSON Schema for a Gleam package configuration file. Not affiliated with the Gleam project",
+    "website": "https://github.com/rvonzimr/gleam_schema",
+    "defaultDialect": "https://json-schema.org/draft/2020-12/schema",
+    "resolve": {
+        "https://github.com/rvonzimr/gleam_schema": "./gleam.json"
+    }
+}

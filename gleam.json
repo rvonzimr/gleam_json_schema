@@ -1,0 +1,479 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/rvonzimr/gleam_schema",
+    "title": "Unofficial gleam.toml schema (Gleam 1.18.0)",
+    "description": "Unofficial, community-written schema for a Gleam package configuration file. Not affiliated with, endorsed by, or published by the Gleam project. Key descriptions are adapted from the official reference at https://gleam.run/documentation/gleam-toml-reference/, which is the authority if the two disagree",
+    "examples": [
+        {
+            "name": "my_package",
+            "version": "1.0.0",
+            "dependencies": {
+                "gleam_stdlib": ">= 0.44.0 and < 2.0.0"
+            },
+            "dev_dependencies": {
+                "gleeunit": ">= 1.0.0 and < 2.0.0"
+            }
+        }
+    ],
+    "type": "object",
+    "required": [ "name", "version" ],
+    "properties": {
+        "name": {
+            "description": "The name of your project",
+            "examples": [ "my_project" ],
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "version": {
+            "description": "The version of your project",
+            "examples": [ "1.0.0" ],
+            "type": "string"
+        },
+        "licences": {
+            "description": "The licences used by your project, written in SPDX format. Required to publish your package to the Hex package manager",
+            "examples": [
+                [ "Apache-2.0" ]
+            ],
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "description": {
+            "description": "A short description of your project. Required to publish your package to the Hex package manager",
+            "examples": [ "A parser for the PureData file format" ],
+            "type": "string"
+        },
+        "dependencies": {
+            "description": "The dependency packages that the Gleam build tool needs to download and compile for this package to use. Erlang rebar3 packages and Elixir mix packages can also be added as dependencies without any change in syntax",
+            "type": "object",
+            "propertyNames": {
+                "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "additionalProperties": {
+                "$ref": "#/$defs/dependency"
+            }
+        },
+        "dev_dependencies": {
+            "description": "The dependency packages needed only during development, using the same syntax as the dependencies field. These dependencies are not included if the package is published to Hex. A package cannot appear in both dependencies and dev_dependencies",
+            "type": "object",
+            "propertyNames": {
+                "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "additionalProperties": {
+                "$ref": "#/$defs/dependency"
+            }
+        },
+        "repository": {
+            "description": "The source code repository for your project. This is used in generated documentation and displayed on Hex. Required to publish your package to the Hex package manager",
+            "type": "object",
+            "allOf": [
+                {
+                    "if": {
+                        "required": [ "type" ],
+                        "properties": {
+                            "type": {
+                                "enum": [
+                                    "bitbucket",
+                                    "codeberg",
+                                    "github",
+                                    "gitlab",
+                                    "sourcehut",
+                                    "tangled"
+                                ]
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/$defs/userRepoRepository"
+                    }
+                },
+                {
+                    "if": {
+                        "required": [ "type" ],
+                        "properties": {
+                            "type": {
+                                "enum": [ "forgejo", "gitea" ]
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/$defs/hostedRepository"
+                    }
+                },
+                {
+                    "if": {
+                        "required": [ "type" ],
+                        "properties": {
+                            "type": {
+                                "const": "custom"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/$defs/customRepository"
+                    }
+                }
+            ],
+            "required": [ "type" ],
+            "properties": {
+                "type": {
+                    "description": "The kind of code hosting the repository uses",
+                    "enum": [
+                        "bitbucket",
+                        "codeberg",
+                        "github",
+                        "gitlab",
+                        "sourcehut",
+                        "tangled",
+                        "forgejo",
+                        "gitea",
+                        "custom"
+                    ]
+                }
+            }
+        },
+        "links": {
+            "description": "Links to related websites, to be displayed in generated documentation and on Hex",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [ "title", "href" ],
+                "properties": {
+                    "title": {
+                        "description": "The text to display for the link",
+                        "examples": [ "Home page" ],
+                        "type": "string"
+                    },
+                    "href": {
+                        "description": "The URL the link points to",
+                        "examples": [ "https://example.com" ],
+                        "type": "string",
+                        "format": "uri"
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        "documentation": {
+            "description": "Configuration for the generated HTML documentation",
+            "type": "object",
+            "properties": {
+                "pages": {
+                    "description": "Additional Markdown pages to include in generated HTML documentation",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [ "title", "path", "source" ],
+                        "properties": {
+                            "title": {
+                                "description": "The title of the page, as shown in the documentation sidebar",
+                                "examples": [ "My Page" ],
+                                "type": "string"
+                            },
+                            "path": {
+                                "description": "The path the generated page is written to within the documentation",
+                                "examples": [ "my-page.html" ],
+                                "type": "string"
+                            },
+                            "source": {
+                                "description": "The path to the source Markdown file",
+                                "examples": [ "./path/to/my-page.md" ],
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "gleam": {
+            "description": "The required Gleam compiler version for the package, using the Hex requirement format. An error is raised if the compiler version used to compile the package does not satisfy this requirement",
+            "examples": [ ">= 1.15.0" ],
+            "type": "string"
+        },
+        "target": {
+            "description": "The default compilation target to use when compiling or running Gleam code. This value can be overridden by the --target flag for the CLI commands that accept it",
+            "default": "erlang",
+            "enum": [ "erlang", "javascript" ]
+        },
+        "internal_modules": {
+            "description": "A list of glob patterns; any module names that match one of the patterns are marked as internal. An internal module is a module that is not part of the public API of the package",
+            "examples": [
+                [ "my_app/internal", "my_app/internal/*" ]
+            ],
+            "default": [ "$PACKAGE_NAME/internal", "$PACKAGE_NAME/internal/*" ],
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "erlang": {
+            "description": "Configuration for Erlang compilation",
+            "type": "object",
+            "properties": {
+                "application_start_module": {
+                    "description": "The name of the OTP application module for the project, if it has one. Applications may want to use it, but libraries almost certainly do not. If specified, the module must implement the OTP application behaviour. The module is specified in the Erlang atom format, so the Gleam module my_project/application would be written as my_project@application",
+                    "examples": [ "my_application", "my_project@application" ],
+                    "type": "string"
+                },
+                "extra_applications": {
+                    "description": "The names of any OTP applications that need to be started in addition to those provided by project dependencies",
+                    "examples": [
+                        [ "inets", "ssl" ]
+                    ],
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "javascript": {
+            "description": "Configuration for JavaScript compilation",
+            "type": "object",
+            "properties": {
+                "source_maps": {
+                    "description": "Whether to generate source map files for compiled Gleam modules",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "typescript_declarations": {
+                    "description": "Whether to generate TypeScript .d.ts files for compiled Gleam modules",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "runtime": {
+                    "description": "The JavaScript runtime to use with gleam run, gleam test, and related commands",
+                    "default": "node",
+                    "enum": [ "node", "deno", "bun" ]
+                },
+                "deno": {
+                    "description": "The Deno runtime uses a permissions system for IO, with the program having to be explicitly given permission to perform these actions. These fields configure each of these permissions, and any combination of them can be provided or omitted",
+                    "type": "object",
+                    "properties": {
+                        "allow_all": {
+                            "description": "Whether to grant all Deno permissions. This is the equivalent of setting all the other fields to true",
+                            "type": "boolean"
+                        },
+                        "allow_env": {
+                            "description": "The environment variable access to allow. This can be either a bool or a list of environment variable names",
+                            "examples": [
+                                true,
+                                [ "HOME", "DATABASE_URL" ]
+                            ],
+                            "$ref": "#/$defs/denoPermissionList"
+                        },
+                        "allow_ffi": {
+                            "description": "Whether to allow foreign function interface access",
+                            "type": "boolean"
+                        },
+                        "allow_hrtime": {
+                            "description": "Whether to allow high-resolution time APIs",
+                            "type": "boolean"
+                        },
+                        "allow_net": {
+                            "description": "The network access to allow. This can be either a boolean or a list of IP addresses or hostnames, optionally including ports",
+                            "examples": [
+                                true,
+                                [ "example.com:443" ]
+                            ],
+                            "$ref": "#/$defs/denoPermissionList"
+                        },
+                        "allow_read": {
+                            "description": "The file system read access to allow. This can be either a boolean or a list of paths",
+                            "examples": [
+                                true,
+                                [ "./database.sqlite" ]
+                            ],
+                            "$ref": "#/$defs/denoPermissionList"
+                        },
+                        "allow_run": {
+                            "description": "The subprocess execution access to allow. This can be either a boolean or a list of paths",
+                            "examples": [
+                                true,
+                                [ "./bin/migrate.sh" ]
+                            ],
+                            "$ref": "#/$defs/denoPermissionList"
+                        },
+                        "allow_sys": {
+                            "description": "Whether to allow access to system information",
+                            "type": "boolean"
+                        },
+                        "allow_write": {
+                            "description": "The file system write access to allow. This can be either a boolean or a list of paths",
+                            "examples": [
+                                true,
+                                [ "./database.sqlite" ]
+                            ],
+                            "$ref": "#/$defs/denoPermissionList"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "tools": {
+            "description": "Here you can place data or configuration for external tools. Authors of such tools are encouraged to place configuration under tools.<tool_name>",
+            "type": "object",
+            "additionalProperties": {
+                "description": "Configuration for a single external tool",
+                "type": "object",
+                "additionalProperties": true
+            }
+        }
+    },
+    "additionalProperties": false,
+    "$defs": {
+        "dependency": {
+            "description": "A dependency: a Hex version requirement string, a path dependency table, or a git dependency table",
+            "if": {
+                "type": "string"
+            },
+            "then": {
+                "$ref": "#/$defs/hexDependency"
+            },
+            "else": {
+                "$ref": "#/$defs/tableDependency"
+            }
+        },
+        "tableDependency": {
+            "description": "A dependency given as a table: a git dependency, which needs git and ref, or a path dependency, which needs path",
+            "type": "object",
+            "anyOf": [
+                {
+                    "required": [ "git" ]
+                },
+                {
+                    "required": [ "path" ]
+                }
+            ],
+            "properties": {
+                "git": {
+                    "description": "The URL of the git repository",
+                    "examples": [ "https://github.com/my-project/my-library" ],
+                    "type": "string"
+                },
+                "ref": {
+                    "description": "The git reference to use. Prefer a commit sha over a branch or tag",
+                    "examples": [ "a8b3c5d82" ],
+                    "type": "string"
+                },
+                "path": {
+                    "description": "For a git dependency, an optional subdirectory within the repository, which is useful for monorepos that contain multiple Gleam packages. On its own, the path to a package on the local file system",
+                    "examples": [ "../my_other_project", "packages/my_library" ],
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "dependentRequired": {
+                "git": [ "ref" ],
+                "ref": [ "git" ]
+            }
+        },
+        "hexDependency": {
+            "title": "Hex dependency",
+            "description": "A version requirement string in the Hex requirement format. The name must match the name the dependency package has in its own package configuration file",
+            "examples": [ ">= 1.0.0 and < 2.0.0" ],
+            "type": "string"
+        },
+        "userRepoRepository": {
+            "title": "User and repo hosted repository",
+            "description": "The repository types bitbucket, codeberg, github, gitlab, sourcehut and tangled require the user and repo fields",
+            "required": [ "user", "repo" ],
+            "properties": {
+                "type": true,
+                "user": {
+                    "description": "The user or organisation that owns the repository",
+                    "examples": [ "torvalds" ],
+                    "type": "string"
+                },
+                "repo": {
+                    "description": "The name of the repository",
+                    "examples": [ "linux" ],
+                    "type": "string"
+                },
+                "path": {
+                    "$ref": "#/$defs/repositoryPath"
+                },
+                "tag_prefix": {
+                    "$ref": "#/$defs/repositoryTagPrefix"
+                }
+            },
+            "additionalProperties": false
+        },
+        "hostedRepository": {
+            "title": "Self-hosted repository",
+            "description": "The repository types forgejo and gitea require the host, user and repo fields",
+            "required": [ "host", "user", "repo" ],
+            "properties": {
+                "type": true,
+                "host": {
+                    "description": "The URL of the host the repository is served from",
+                    "examples": [ "https://example.com" ],
+                    "type": "string",
+                    "format": "uri"
+                },
+                "user": {
+                    "description": "The user or organisation that owns the repository",
+                    "examples": [ "my-username" ],
+                    "type": "string"
+                },
+                "repo": {
+                    "description": "The name of the repository",
+                    "examples": [ "my-repo" ],
+                    "type": "string"
+                },
+                "path": {
+                    "$ref": "#/$defs/repositoryPath"
+                },
+                "tag_prefix": {
+                    "$ref": "#/$defs/repositoryTagPrefix"
+                }
+            },
+            "additionalProperties": false
+        },
+        "customRepository": {
+            "title": "Custom repository",
+            "description": "If you are using a different code hosting solution you can use the custom type, which requires the url field. When this is used generated HTML documentation will include a link to the repo, but will not include links to the definitions of public types and values in the source code. The custom type does not support path or tag_prefix",
+            "required": [ "url" ],
+            "properties": {
+                "type": true,
+                "url": {
+                    "description": "The URL of the repository",
+                    "examples": [ "https://example.com/my-project" ],
+                    "type": "string",
+                    "format": "uri"
+                }
+            },
+            "additionalProperties": false
+        },
+        "repositoryPath": {
+            "description": "The path to the directory that contains the package from the root of the repository. Used when you have one repo (a \"monorepo\") that contains multiple Gleam packages",
+            "examples": [ "packages/one" ],
+            "type": "string"
+        },
+        "repositoryTagPrefix": {
+            "description": "A prefix that is to be added to git tags for package releases, to avoid collisions between the multiple packages in a monorepo",
+            "examples": [ "one-" ],
+            "type": "string"
+        },
+        "denoPermissionList": {
+            "description": "A Deno permission that can be granted entirely with a boolean, or narrowed with a list of allowed values",
+            "anyOf": [
+                {
+                    "type": "boolean"
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            ]
+        }
+    }
+}

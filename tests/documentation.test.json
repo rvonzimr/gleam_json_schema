@@ -1,0 +1,79 @@
+{
+    "target": "https://github.com/rvonzimr/gleam_schema",
+    "$comment": "links and documentation.pages",
+    "tests": [
+        {
+            "description": "several links",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "links": [
+                    { "title": "Home page", "href": "https://example.com" },
+                    { "title": "Other site", "href": "https://another.example.com" }
+                ]
+            }
+        },
+        {
+            "description": "an empty links array",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "links": [] }
+        },
+        {
+            "description": "a link needs both title and href",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "links": [ { "title": "Home page" } ]
+            }
+        },
+        {
+            "description": "a link with an unknown key is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "links": [ { "title": "Home page", "href": "https://example.com", "rel": "me" } ]
+            }
+        },
+        {
+            "description": "links must be an array of tables, not a single table",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "links": { "title": "Home page", "href": "https://example.com" }
+            }
+        },
+        {
+            "description": "a documentation page needs title, path and source",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "documentation": {
+                    "pages": [
+                        { "title": "My Page", "path": "my-page.html", "source": "./path/to/my-page.md" }
+                    ]
+                }
+            }
+        },
+        {
+            "description": "the pages key is optional within documentation",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "documentation": {} }
+        },
+        {
+            "description": "a documentation page without source is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "documentation": { "pages": [ { "title": "My Page", "path": "my-page.html" } ] }
+            }
+        },
+        {
+            "description": "an unknown key under documentation is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "documentation": { "page": [] }
+            }
+        }
+    ]
+}

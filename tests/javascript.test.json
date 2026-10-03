@@ -1,0 +1,158 @@
+{
+    "target": "https://github.com/rvonzimr/gleam_schema",
+    "$comment": "The javascript table, including the Deno permission fields",
+    "tests": [
+        {
+            "description": "source maps, TypeScript declarations and a runtime",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": {
+                    "source_maps": true,
+                    "typescript_declarations": true,
+                    "runtime": "node"
+                }
+            }
+        },
+        {
+            "description": "the deno runtime",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "javascript": { "runtime": "deno" } }
+        },
+        {
+            "description": "the bun runtime",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "javascript": { "runtime": "bun" } }
+        },
+        {
+            "description": "an unsupported runtime is rejected",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "javascript": { "runtime": "quickjs" } }
+        },
+        {
+            "description": "source_maps must be a boolean",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "javascript": { "source_maps": "true" } }
+        },
+        {
+            "description": "sourcemaps is not the documented key name",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "javascript": { "sourcemaps": true } }
+        },
+        {
+            "description": "the documented Deno permission example",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": {
+                    "deno": {
+                        "allow_hrtime": true,
+                        "allow_net": ["example.com:443"],
+                        "allow_run": ["./bin/migrate.sh"],
+                        "allow_read": ["./database.sqlite"],
+                        "allow_write": ["./database.sqlite"]
+                    }
+                }
+            }
+        },
+        {
+            "description": "every Deno permission at once",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": {
+                    "deno": {
+                        "allow_all": false,
+                        "allow_env": ["HOME", "DATABASE_URL"],
+                        "allow_ffi": true,
+                        "allow_hrtime": true,
+                        "allow_net": ["127.0.0.1", "example.com:443"],
+                        "allow_read": ["./database.sqlite"],
+                        "allow_run": ["./bin/migrate.sh"],
+                        "allow_sys": false,
+                        "allow_write": ["./database.sqlite"]
+                    }
+                }
+            }
+        },
+        {
+            "description": "the list style permissions also accept a bare boolean",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": {
+                    "deno": {
+                        "allow_env": true,
+                        "allow_net": true,
+                        "allow_read": true,
+                        "allow_run": true,
+                        "allow_write": true
+                    }
+                }
+            }
+        },
+        {
+            "description": "allow_all grants everything",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "javascript": { "deno": { "allow_all": true } } }
+        },
+        {
+            "description": "an empty deno table",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "javascript": { "deno": {} } }
+        },
+        {
+            "description": "allow_all is boolean only and takes no list",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": { "deno": { "allow_all": ["everything"] } }
+            }
+        },
+        {
+            "description": "allow_hrtime is boolean only and takes no list",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": { "deno": { "allow_hrtime": ["high"] } }
+            }
+        },
+        {
+            "description": "allow_sys is boolean only and takes no list",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": { "deno": { "allow_sys": ["hostname"] } }
+            }
+        },
+        {
+            "description": "allow_ffi is boolean only and takes no list",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": { "deno": { "allow_ffi": ["./lib.so"] } }
+            }
+        },
+        {
+            "description": "a permission list must hold strings, not numbers",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": { "deno": { "allow_net": [443] } }
+            }
+        },
+        {
+            "description": "an unknown Deno permission is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "javascript": { "deno": { "allow_import": true } }
+            }
+        },
+        {
+            "description": "the deno table belongs under javascript, not at the top level",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "deno": { "allow_all": true } }
+        }
+    ]
+}

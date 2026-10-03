@@ -1,0 +1,22 @@
+# An application targeting JavaScript on the Deno runtime.
+name = "my_app"
+version = "0.1.0"
+target = "javascript"
+
+[javascript]
+source_maps = true
+typescript_declarations = true
+runtime = "deno"
+
+[javascript.deno]
+allow_hrtime = true
+allow_net = ["example.com:443"]
+allow_run = ["./bin/migrate.sh"]
+allow_read = ["./database.sqlite"]
+allow_write = ["./database.sqlite"]
+
+[dependencies]
+gleam_stdlib = ">= 1.0.0 and < 2.0.0"
+
+[dev_dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"

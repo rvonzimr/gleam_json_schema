@@ -1,0 +1,121 @@
+{
+    "target": "https://github.com/rvonzimr/gleam_schema",
+    "$comment": "Project metadata: name, version, licences, description",
+    "tests": [
+        {
+            "description": "the minimum viable configuration is name and version",
+            "valid": true,
+            "data": {
+                "name": "my_project",
+                "version": "1.0.0"
+            }
+        },
+        {
+            "description": "all four metadata keys together",
+            "valid": true,
+            "data": {
+                "name": "my_project",
+                "version": "1.0.0",
+                "licences": [
+                    "Apache-2.0",
+                    "MIT"
+                ],
+                "description": "A parser for the PureData file format"
+            }
+        },
+        {
+            "description": "name is required",
+            "valid": false,
+            "data": {
+                "version": "1.0.0"
+            }
+        },
+        {
+            "description": "version is required",
+            "valid": false,
+            "data": {
+                "name": "my_project"
+            }
+        },
+        {
+            "description": "an empty table is missing both required keys",
+            "valid": false,
+            "data": {}
+        },
+        {
+            "description": "name must be a lowercase Gleam identifier, not kebab-case",
+            "valid": false,
+            "data": {
+                "name": "my-project",
+                "version": "1.0.0"
+            }
+        },
+        {
+            "description": "name may not start with a digit",
+            "valid": false,
+            "data": {
+                "name": "1_project",
+                "version": "1.0.0"
+            }
+        },
+        {
+            "description": "name may not be capitalised",
+            "valid": false,
+            "data": {
+                "name": "MyProject",
+                "version": "1.0.0"
+            }
+        },
+        {
+            "description": "name may contain digits and underscores",
+            "valid": true,
+            "data": {
+                "name": "gleam_otp_2",
+                "version": "1.0.0"
+            }
+        },
+        {
+            "description": "version must be a string, not a number",
+            "valid": false,
+            "data": {
+                "name": "my_project",
+                "version": 1.0
+            }
+        },
+        {
+            "description": "licences must be an array of strings",
+            "valid": false,
+            "data": {
+                "name": "my_project",
+                "version": "1.0.0",
+                "licences": "Apache-2.0"
+            }
+        },
+        {
+            "description": "unknown top level keys are rejected",
+            "valid": false,
+            "data": {
+                "name": "my_project",
+                "version": "1.0.0",
+                "licenses": [
+                    "Apache-2.0"
+                ]
+            }
+        },
+        {
+            "description": "a configuration must be a table, not an array",
+            "valid": false,
+            "data": [
+                {
+                    "name": "a",
+                    "version": "1.0.0"
+                }
+            ]
+        },
+        {
+            "description": "a configuration must be a table, not a string",
+            "valid": false,
+            "data": "name = \"a\""
+        }
+    ]
+}

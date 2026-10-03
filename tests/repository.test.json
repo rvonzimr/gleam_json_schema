@@ -1,0 +1,127 @@
+{
+    "target": "https://github.com/rvonzimr/gleam_schema",
+    "$comment": "Every repository type and its required field set",
+    "tests": [
+        {
+            "description": "github requires user and repo",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "github", "user": "torvalds", "repo": "linux" }
+            }
+        },
+        {
+            "description": "bitbucket, codeberg, gitlab, sourcehut and tangled take the same fields",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "tangled", "user": "my-username", "repo": "my-repo" }
+            }
+        },
+        {
+            "description": "a monorepo package adds path and tag_prefix",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": {
+                    "type": "github", "user": "my-user", "repo": "package_one",
+                    "path": "packages/one", "tag_prefix": "one-"
+                }
+            }
+        },
+        {
+            "description": "gitea requires host as well as user and repo",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": {
+                    "type": "gitea", "host": "https://example.com",
+                    "user": "my-username", "repo": "my-repo"
+                }
+            }
+        },
+        {
+            "description": "forgejo requires host as well as user and repo",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": {
+                    "type": "forgejo", "host": "https://example.com",
+                    "user": "my-username", "repo": "my-repo"
+                }
+            }
+        },
+        {
+            "description": "custom requires url",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "custom", "url": "https://example.com/my-project" }
+            }
+        },
+        {
+            "description": "an unknown repository type is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "svn", "url": "https://example.com" }
+            }
+        },
+        {
+            "description": "type is required",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "user": "u", "repo": "r" }
+            }
+        },
+        {
+            "description": "github without repo is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "github", "user": "u" }
+            }
+        },
+        {
+            "description": "gitea without host is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "gitea", "user": "u", "repo": "r" }
+            }
+        },
+        {
+            "description": "github does not take a host",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "github", "host": "https://example.com", "user": "u", "repo": "r" }
+            }
+        },
+        {
+            "description": "custom without url is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "custom" }
+            }
+        },
+        {
+            "description": "custom does not support path or tag_prefix",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "custom", "url": "https://example.com", "tag_prefix": "one-" }
+            }
+        },
+        {
+            "description": "custom does not take user and repo",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "repository": { "type": "custom", "url": "https://example.com", "user": "u", "repo": "r" }
+            }
+        }
+    ]
+}

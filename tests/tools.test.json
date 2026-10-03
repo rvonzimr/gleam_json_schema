@@ -1,0 +1,51 @@
+{
+    "target": "https://github.com/rvonzimr/gleam_schema",
+    "$comment": "The tools table is a free form namespace for external tools",
+    "tests": [
+        {
+            "description": "the documented example",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "tools": { "my_tool": { "enable": true, "threads": 8 } }
+            }
+        },
+        {
+            "description": "a tool table may hold arbitrary nested configuration",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "tools": {
+                    "my_tool": {
+                        "paths": ["src", "test"],
+                        "nested": { "deeply": { "ok": true } },
+                        "threshold": 0.75
+                    }
+                }
+            }
+        },
+        {
+            "description": "several tools side by side",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "tools": { "one": {}, "two": { "x": 1 } }
+            }
+        },
+        {
+            "description": "an empty tools table",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "tools": {} }
+        },
+        {
+            "description": "a tool entry must be a table, not a scalar",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "tools": { "my_tool": true } }
+        },
+        {
+            "description": "a tool entry must be a table, not an array",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "tools": { "my_tool": [1, 2] } }
+        }
+    ]
+}

@@ -1,0 +1,49 @@
+[tools]
+jsonschema = "latest"
+tombi = "latest"
+# Only used by the `convert` task: tombi has no TOML -> JSON command.
+taplo = "latest"
+
+[tasks.lint]
+description = "Run every schema check"
+depends = ["lint:*"]
+
+[tasks."lint:metaschema"]
+description = "Check gleam.json is valid against its metaschema"
+run = "jsonschema metaschema gleam.json"
+
+[tasks."lint:idioms"]
+description = "Check gleam.json for JSON Schema anti-patterns"
+run = "jsonschema lint gleam.json"
+
+[tasks."lint:format"]
+description = "Check gleam.json is formatted"
+run = "jsonschema fmt --check --indentation 4 gleam.json"
+
+[tasks.format]
+description = "Format everything in place"
+depends = ["format:*"]
+
+[tasks."format:schema"]
+description = "Format gleam.json in place"
+run = "jsonschema fmt --indentation 4 gleam.json"
+
+[tasks."format:toml"]
+description = "Format the TOML examples in place"
+run = "tombi format examples"
+
+[tasks."test"]
+description = "Run the schema unit tests in tests/"
+run = "jsonschema test tests --extension .test.json"
+
+[tasks.validate]
+description = "Validate TOML files against the schema"
+usage = 'arg "<paths>" var=#true default="examples" help="Files or directories to check"'
+# Schema association comes from tombi.toml, so this works on any gleam.toml,
+# including files outside this project.
+run = "tombi lint --error-on-warnings $usage_paths"
+
+[tasks.convert]
+description = "Print a TOML file as JSON"
+usage = 'arg "<file>" help="The TOML file to convert"'
+run = "taplo get -f $usage_file -o json"

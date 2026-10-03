@@ -1,0 +1,6 @@
+[schema]
+enabled = true
+
+[[schemas]]
+path = "gleam.json"
+include = ["**/gleam.toml", "examples/*.toml"]

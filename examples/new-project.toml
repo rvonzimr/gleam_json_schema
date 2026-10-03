@@ -1,0 +1,9 @@
+# The default configuration for a new Gleam package.
+name = "my_package"
+version = "1.0.0"
+
+[dependencies]
+gleam_stdlib = ">= 0.44.0 and < 2.0.0"
+
+[dev_dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"

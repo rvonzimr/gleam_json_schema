@@ -1,0 +1,142 @@
+{
+    "target": "https://github.com/rvonzimr/gleam_schema",
+    "$comment": "Hex, path and git dependencies, in both dependencies and dev_dependencies",
+    "tests": [
+        {
+            "description": "a Hex requirement string",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": { "gleam_stdlib": ">= 1.0.0 and < 2.0.0" }
+            }
+        },
+        {
+            "description": "a path dependency",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": { "my_other_project": { "path": "../my_other_project" } }
+            }
+        },
+        {
+            "description": "a git dependency with git and ref",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": {
+                    "my_library": { "git": "https://github.com/my-project/my-library", "ref": "a8b3c5d82" }
+                }
+            }
+        },
+        {
+            "description": "a git dependency with a monorepo subdirectory",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": {
+                    "my_library": {
+                        "git": "https://github.com/my-project/monorepo",
+                        "ref": "a8b3c5d82",
+                        "path": "packages/my_library"
+                    }
+                }
+            }
+        },
+        {
+            "description": "all three dependency kinds side by side",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": {
+                    "gleam_stdlib": ">= 1.0.0 and < 2.0.0",
+                    "local_pkg": { "path": "../local_pkg" },
+                    "remote_pkg": { "git": "https://example.com/r", "ref": "a8b3c5d82" }
+                }
+            }
+        },
+        {
+            "description": "dev_dependencies accepts the same syntax",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dev_dependencies": {
+                    "gleeunit": ">= 1.0.0 and < 2.0.0",
+                    "local_test_helper": { "path": "../helper" },
+                    "remote_test_helper": { "git": "https://example.com/r", "ref": "a8b3c5d82" }
+                }
+            }
+        },
+        {
+            "description": "an empty dependencies table is fine",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "dependencies": {} }
+        },
+        {
+            "description": "a git dependency without ref is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": { "my_library": { "git": "https://example.com/r" } }
+            }
+        },
+        {
+            "description": "a git dependency with ref but no git falls through to path and is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": { "my_library": { "ref": "a8b3c5d82" } }
+            }
+        },
+        {
+            "description": "a branch key is not part of the git dependency syntax",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": {
+                    "my_library": { "git": "https://example.com/r", "ref": "a8b", "branch": "main" }
+                }
+            }
+        },
+        {
+            "description": "a misspelled path key is rejected",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": { "my_library": { "pth": "../my_library" } }
+            }
+        },
+        {
+            "description": "an empty dependency table is neither a path nor a git dependency",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "dependencies": { "my_library": {} } }
+        },
+        {
+            "description": "a dependency may not be a number",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "dependencies": { "my_library": 1 } }
+        },
+        {
+            "description": "a dependency may not be an array",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "dependencies": { "my_library": [">= 1.0.0"] } }
+        },
+        {
+            "description": "a dependency name must be a lowercase Gleam identifier",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": { "My-Library": ">= 1.0.0" }
+            }
+        },
+        {
+            "description": "path and git may not be combined in one dependency",
+            "valid": false,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "dependencies": {
+                    "my_library": { "git": "https://example.com/r", "ref": "a8b", "path": "p", "extra": 1 }
+                }
+            }
+        }
+    ]
+}

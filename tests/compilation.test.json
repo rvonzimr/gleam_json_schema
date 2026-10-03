@@ -1,0 +1,54 @@
+{
+    "target": "https://github.com/rvonzimr/gleam_schema",
+    "$comment": "gleam, target and internal_modules",
+    "tests": [
+        {
+            "description": "a compiler version requirement",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "gleam": ">= 1.15.0" }
+        },
+        {
+            "description": "target erlang",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "target": "erlang" }
+        },
+        {
+            "description": "target javascript",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "target": "javascript" }
+        },
+        {
+            "description": "an unsupported target is rejected",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "target": "wasm" }
+        },
+        {
+            "description": "target is case sensitive",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "target": "Erlang" }
+        },
+        {
+            "description": "internal_modules is a list of glob patterns",
+            "valid": true,
+            "data": {
+                "name": "a", "version": "1.0.0",
+                "internal_modules": ["my_app/internal", "my_app/internal/*"]
+            }
+        },
+        {
+            "description": "internal_modules may be empty to make every module public",
+            "valid": true,
+            "data": { "name": "a", "version": "1.0.0", "internal_modules": [] }
+        },
+        {
+            "description": "internal_modules must be an array, not a bare string",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "internal_modules": "my_app/internal" }
+        },
+        {
+            "description": "the compiler version requirement must be a string",
+            "valid": false,
+            "data": { "name": "a", "version": "1.0.0", "gleam": 1.15 }
+        }
+    ]
+}
